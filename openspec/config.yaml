@@ -1,0 +1,35 @@
+schema: spec-driven
+
+context: |
+  Project: spark-feature-engine
+  Tech stack: Python 3.9+, PySpark 3.4+, setuptools
+  Architecture: PySpark ML Estimator/Transformer pattern with Param objects; native Spark SQL only; zero UDFs
+  Testing: pytest + pytest-spark
+  Style: Ruff format (line length 88), Ruff, mypy
+  CI: unknown
+
+rules:
+  proposal:
+    - Include rollback plan for risky changes
+    - Identify affected modules/packages
+  specs:
+    - Use Given/When/Then format for scenarios
+    - Use RFC 2119 keywords (MUST, SHALL, SHOULD, MAY)
+  design:
+    - Include sequence diagrams for complex flows
+    - Document architecture decisions with rationale
+  tasks:
+    - Group tasks by phase (infrastructure, implementation, testing)
+    - Use hierarchical numbering (1.1, 1.2, etc.)
+    - Keep tasks small enough to complete in one session
+  apply:
+    guidance:
+      - Follow existing code patterns and conventions
+    tdd: false
+    test_command: 'pytest'
+  verify:
+    test_command: 'pytest'
+    build_command: 'python -m build'
+    coverage_threshold: 0
+  archive:
+    - Warn before merging destructive deltas
