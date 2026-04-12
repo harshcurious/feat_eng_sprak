@@ -1,6 +1,24 @@
 """spark_feature_engine package."""
 
 from .base import BaseSparkTransformer
+from .discretisation import (
+    ArbitraryDiscretiser,
+    ArbitraryDiscretiserModel,
+    EqualFrequencyDiscretiser,
+    EqualFrequencyDiscretiserModel,
+    EqualWidthDiscretiser,
+    EqualWidthDiscretiserModel,
+)
+from .encoding import (
+    CountFrequencyEncoder,
+    CountFrequencyEncoderModel,
+    OneHotEncoder,
+    OneHotEncoderModel,
+    OrdinalEncoder,
+    OrdinalEncoderModel,
+    RareLabelEncoder,
+    RareLabelEncoderModel,
+)
 from .imputation import (
     ArbitraryNumberImputer,
     CategoricalImputer,
@@ -11,9 +29,23 @@ from .imputation import (
 
 __all__ = (
     "BaseSparkTransformer",
+    "ArbitraryDiscretiser",
+    "ArbitraryDiscretiserModel",
+    "EqualFrequencyDiscretiser",
+    "EqualFrequencyDiscretiserModel",
+    "EqualWidthDiscretiser",
+    "EqualWidthDiscretiserModel",
+    "CountFrequencyEncoder",
+    "CountFrequencyEncoderModel",
     "ArbitraryNumberImputer",
     "CategoricalImputer",
     "DropMissingData",
+    "OneHotEncoder",
+    "OneHotEncoderModel",
+    "OrdinalEncoder",
+    "OrdinalEncoderModel",
+    "RareLabelEncoder",
+    "RareLabelEncoderModel",
     "MeanMedianImputer",
     "MeanMedianImputerModel",
 )

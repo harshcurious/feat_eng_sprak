@@ -117,6 +117,10 @@ class OrdinalEncoder(BaseSparkEstimator):
 class OrdinalEncoderModel(BaseSparkModel):
     """Fitted ordinal encoder backed by native Spark expressions."""
 
+    variables_: list[str]
+    mappings_: dict[str, dict[str, int]]
+    unseen_: str
+
     def __init__(
         self,
         *,

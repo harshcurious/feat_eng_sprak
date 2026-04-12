@@ -73,7 +73,7 @@ class CategoricalImputer(BaseSparkTransformer):
 
     def get_fill_value(self) -> str:
         """Return the configured replacement value."""
-        return cast(str, self.get_param_value(self.fill_value))
+        return self.get_param_value(self.fill_value)
 
     def _transform(self, dataset: DataFrame) -> DataFrame:
         variables = _resolve_categorical_variables(dataset, self.get_variables())

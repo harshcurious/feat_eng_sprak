@@ -63,7 +63,7 @@ def _learn_boundaries(
 ) -> dict[str, list[float]]:
     probabilities = [index / bin_count for index in range(1, bin_count)]
     quantiles = dataset.approxQuantile(list(variables), probabilities, _RELATIVE_ERROR)
-    aggregations = []
+    aggregations: list[Column] = []
     for variable in variables:
         aggregations.extend(
             (
@@ -137,6 +137,11 @@ class EqualFrequencyDiscretiser(BaseSparkEstimator):
 
 class EqualFrequencyDiscretiserModel(BaseSparkModel):
     """Fitted equal-frequency discretiser backed by native Spark bucketing."""
+
+    variables_: list[str]
+    bin_count_: int
+    output_: str
+    boundaries_: dict[str, list[float]]
 
     def __init__(
         self,

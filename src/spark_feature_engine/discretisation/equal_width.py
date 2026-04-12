@@ -32,7 +32,7 @@ def _learn_boundaries(
     variables: Sequence[str],
     bin_count: int,
 ) -> dict[str, list[float]]:
-    aggregations = []
+    aggregations: list[Column] = []
     for variable in variables:
         aggregations.extend(
             (
@@ -127,6 +127,11 @@ class EqualWidthDiscretiser(BaseSparkEstimator):
 
 class EqualWidthDiscretiserModel(BaseSparkModel):
     """Fitted equal-width discretiser backed by native Spark bucketing."""
+
+    variables_: list[str]
+    bin_count_: int
+    output_: str
+    boundaries_: dict[str, list[float]]
 
     def __init__(
         self,

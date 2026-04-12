@@ -5,6 +5,7 @@ from __future__ import annotations
 from numbers import Real
 from typing import Sequence
 
+from pyspark.sql import Column
 from pyspark.sql import DataFrame
 from pyspark.sql import functions as F
 
@@ -62,6 +63,13 @@ class RareLabelEncoder(BaseSparkEstimator):
 
 class RareLabelEncoderModel(BaseSparkModel):
     """Fitted rare-label encoder backed by native Spark expressions."""
+
+    variables_: list[str]
+    tolerance_: float
+    min_categories_: int
+    max_categories_: int | None
+    replacement_label_: str
+    frequent_labels_: dict[str, list[str]]
 
     def __init__(
         self,
@@ -189,7 +197,7 @@ def _replace_rare_labels(
     *,
     frequent_labels: Sequence[str],
     replacement_label: str,
-):
+) -> Column:
     column = F.col(variable)
     if frequent_labels:
         return (

@@ -44,7 +44,7 @@ def _resolve_numeric_variables(
 class ArbitraryNumberImputer(BaseSparkTransformer):
     """Fill selected numeric columns with a constant value."""
 
-    fill_value = Param(
+    fill_value: Param[float] = Param(
         Params._dummy(),
         "fill_value",
         "Constant value used to fill missing numeric entries.",
@@ -67,7 +67,7 @@ class ArbitraryNumberImputer(BaseSparkTransformer):
 
     def get_fill_value(self) -> float:
         """Return the configured fill value."""
-        return cast(float, self.get_param_value(self.fill_value))
+        return self.get_param_value(self.fill_value)
 
     def _transform(self, dataset: DataFrame) -> DataFrame:
         variables = _resolve_numeric_variables(dataset, self.get_variables())

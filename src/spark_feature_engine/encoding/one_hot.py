@@ -92,6 +92,10 @@ class OneHotEncoder(BaseSparkEstimator):
 class OneHotEncoderModel(BaseSparkModel):
     """Fitted one-hot encoder backed by native Spark expressions."""
 
+    variables_: list[str]
+    categories_: dict[str, list[str]]
+    generated_columns_: dict[str, list[str]]
+
     def __init__(
         self,
         *,

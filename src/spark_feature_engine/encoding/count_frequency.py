@@ -151,6 +151,11 @@ class CountFrequencyEncoder(BaseSparkEstimator):
 class CountFrequencyEncoderModel(BaseSparkModel):
     """Fitted count/frequency encoder backed by native Spark expressions."""
 
+    variables_: list[str]
+    mappings_: dict[str, dict[str, int | float]]
+    method_: str
+    unseen_: str
+
     def __init__(
         self,
         *,

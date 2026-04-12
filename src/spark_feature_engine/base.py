@@ -27,13 +27,13 @@ class _BaseSparkFeaturesMixin:
     """Shared parameter and learned-state helpers for Spark ML components."""
 
     def _set_param(self, param: Param[Any], value: Any) -> Any:
-        return self._set(**{param.name: value})
+        return self._set(**{param.name: value})  # type: ignore[attr-defined]
 
     def get_param_value(self, param: Param[_ValueT]) -> _ValueT:
-        return cast(_ValueT, self.getOrDefault(param))
+        return cast(_ValueT, self.getOrDefault(param))  # type: ignore[attr-defined]
 
     def get_required_param(self, param: Param[_ValueT]) -> _ValueT:
-        if not self.isSet(param) and not self.hasDefault(param):
+        if not self.isSet(param) and not self.hasDefault(param):  # type: ignore[attr-defined]
             raise ValueError(f"Parameter '{param.name}' must be set before use")
         return self.get_param_value(param)
 
@@ -64,7 +64,7 @@ class _VariablesParamMixin(_BaseSparkFeaturesMixin):
     )
 
     def _init_variables_param(self, *, variables: Sequence[str] | None = None) -> None:
-        self._setDefault(variables=None)
+        self._setDefault(variables=None)  # type: ignore[attr-defined]
         if variables is not None:
             self.set_variables(variables)
 

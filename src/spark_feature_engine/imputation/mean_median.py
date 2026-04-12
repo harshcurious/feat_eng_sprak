@@ -94,22 +94,19 @@ class MeanMedianImputer(
 
     def set_variables(self, value: Sequence[str] | None) -> "MeanMedianImputer":
         """Set selected numeric input columns."""
-        return cast(
-            MeanMedianImputer,
-            self._set(variables=to_optional_list_of_strings(value)),
-        )
+        return self._set(variables=to_optional_list_of_strings(value))
 
     def get_variables(self) -> list[str] | None:
         """Return selected input columns, if configured."""
-        return cast(list[str] | None, self.getOrDefault(self.variables))
+        return self.getOrDefault(self.variables)
 
     def set_imputation_method(self, value: str) -> "MeanMedianImputer":
         """Set the learned statistic strategy."""
-        return cast(MeanMedianImputer, self._set(imputation_method=value))
+        return self._set(imputation_method=value)
 
     def get_imputation_method(self) -> str:
         """Return the configured statistic strategy."""
-        return cast(str, self.getOrDefault(self.imputation_method))
+        return self.getOrDefault(self.imputation_method)
 
     def _fit(self, dataset: DataFrame) -> "MeanMedianImputerModel":
         variables = _resolve_numeric_variables(dataset, self.get_variables())
@@ -145,6 +142,10 @@ class MeanMedianImputerModel(
 ):
     """Fitted model that fills nulls with learned per-column statistics."""
 
+    variables_: list[str]
+    imputer_dict_: dict[str, float]
+    imputation_method_: str
+
     def __init__(
         self,
         *,
@@ -162,7 +163,7 @@ class MeanMedianImputerModel(
         validate_column_types(dataset, self.variables_, expected_type="numeric")
         if not self.imputer_dict_:
             return dataset
-        return dataset.fillna(self.imputer_dict_)
+        return dataset.fillna(self.imputer_dict_)  # type: ignore[arg-type]
 
 
 __all__ = ("MeanMedianImputer", "MeanMedianImputerModel")
