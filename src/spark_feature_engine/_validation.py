@@ -130,11 +130,41 @@ def resolve_numeric_columns(
     return resolved
 
 
+def discover_numeric_columns(dataset: DataFrame) -> list[str]:
+    """Return all numeric columns in schema order."""
+    return resolve_numeric_columns(dataset)
+
+
 def normalize_option_value(name: str, value: str) -> str:
     """Normalize option-like string parameters deterministically."""
     if not isinstance(value, str):
         raise TypeError(f"{name} must be a string")
     return value.strip().lower()
+
+
+def normalize_exponent(value: Real) -> float:
+    """Normalize a power-transform exponent."""
+    if not isinstance(value, Real) or isinstance(value, bool):
+        raise TypeError("exponent must be a real number")
+    return float(value)
+
+
+def validate_positive_values(
+    values: Sequence[Real], *, name: str = "values"
+) -> list[float]:
+    """Validate strictly positive numeric values."""
+    if isinstance(values, (str, bytes)):
+        raise TypeError(f"{name} must be a sequence of numeric values")
+
+    converted: list[float] = []
+    for value in values:
+        if not isinstance(value, Real) or isinstance(value, bool):
+            raise TypeError(f"{name} must contain only numeric values")
+        converted_value = float(value)
+        if converted_value <= 0:
+            raise ValueError(f"{name} must contain only positive values")
+        converted.append(converted_value)
+    return converted
 
 
 def validate_supported_option(
@@ -205,6 +235,11 @@ def validate_fitted_attributes(
         )
 
 
+def validate_learned_state(instance: object, attribute_names: Sequence[str]) -> None:
+    """Alias for validating fitted learned-state attributes."""
+    validate_fitted_attributes(instance, attribute_names)
+
+
 def validate_bin_count(bin_count: int) -> int:
     """Validate the configured discretisation bin count."""
     if not isinstance(bin_count, int) or isinstance(bin_count, bool):
@@ -248,6 +283,20 @@ def validate_discretisation_boundaries(
     return converted
 
 
+def validate_outlier_bounds(
+    bounds: Sequence[float],
+    *,
+    name: str = "bounds",
+) -> list[float]:
+    """Validate learned outlier bounds for a selected numeric column."""
+    return validate_discretisation_boundaries(
+        bounds,
+        name=name,
+        minimum_size=2,
+        allow_infinite=False,
+    )
+
+
 def matches_expected_type(field: StructField, expected_type: ColumnExpectation) -> bool:
     """Return whether a schema field satisfies the requested expectation."""
     if expected_type == "numeric":
@@ -259,8 +308,10 @@ def matches_expected_type(field: StructField, expected_type: ColumnExpectation) 
 
 __all__ = (
     "ColumnExpectation",
+    "discover_numeric_columns",
     "matches_expected_type",
     "normalize_option_value",
+    "normalize_exponent",
     "resolve_variables",
     "resolve_categorical_columns",
     "resolve_numeric_columns",
@@ -272,6 +323,9 @@ __all__ = (
     "validate_fitted_attributes",
     "validate_generated_column_names",
     "validate_learned_attribute_name",
+    "validate_learned_state",
+    "validate_outlier_bounds",
+    "validate_positive_values",
     "validate_supported_option",
     "validate_unique_columns",
 )

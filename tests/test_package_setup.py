@@ -18,12 +18,18 @@ from spark_feature_engine import (
     EqualWidthDiscretiserModel,
     MeanMedianImputer,
     MeanMedianImputerModel,
+    LogTransformer,
     OneHotEncoder,
     OneHotEncoderModel,
+    OutlierTrimmer,
+    OutlierTrimmerModel,
     OrdinalEncoder,
     OrdinalEncoderModel,
+    PowerTransformer,
     RareLabelEncoder,
     RareLabelEncoderModel,
+    Winsorizer,
+    WinsorizerModel,
 )
 
 
@@ -49,6 +55,12 @@ def test_public_package_exports_are_available() -> None:
         "RareLabelEncoderModel",
         "MeanMedianImputer",
         "MeanMedianImputerModel",
+        "OutlierTrimmer",
+        "OutlierTrimmerModel",
+        "Winsorizer",
+        "WinsorizerModel",
+        "LogTransformer",
+        "PowerTransformer",
     }
 
     assert set(spark_feature_engine.__all__) == expected
@@ -76,6 +88,12 @@ def test_public_package_exports_are_available() -> None:
     assert RareLabelEncoderModel is spark_feature_engine.RareLabelEncoderModel
     assert MeanMedianImputer is spark_feature_engine.MeanMedianImputer
     assert MeanMedianImputerModel is spark_feature_engine.MeanMedianImputerModel
+    assert OutlierTrimmer is spark_feature_engine.OutlierTrimmer
+    assert OutlierTrimmerModel is spark_feature_engine.OutlierTrimmerModel
+    assert Winsorizer is spark_feature_engine.Winsorizer
+    assert WinsorizerModel is spark_feature_engine.WinsorizerModel
+    assert LogTransformer is spark_feature_engine.LogTransformer
+    assert PowerTransformer is spark_feature_engine.PowerTransformer
 
 
 def test_shared_spark_fixture_is_local_and_deterministic(spark_session) -> None:

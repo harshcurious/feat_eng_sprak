@@ -26,6 +26,8 @@ from .imputation import (
     MeanMedianImputer,
     MeanMedianImputerModel,
 )
+from .outliers import OutlierTrimmer, OutlierTrimmerModel, Winsorizer, WinsorizerModel
+from .transformation import LogTransformer, PowerTransformer
 
 __all__ = (
     "BaseSparkTransformer",
@@ -48,6 +50,12 @@ __all__ = (
     "RareLabelEncoderModel",
     "MeanMedianImputer",
     "MeanMedianImputerModel",
+    "OutlierTrimmer",
+    "OutlierTrimmerModel",
+    "Winsorizer",
+    "WinsorizerModel",
+    "LogTransformer",
+    "PowerTransformer",
 )
 
 __version__ = "0.0.0"
