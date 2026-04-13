@@ -5,10 +5,10 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "spark-feature-engine"
 version = "0.1.0"
-description = "PySpark feature engineering utilities for missing-data imputation"
-readme = {text = "spark_feature_engine", content-type = "text/plain"}
+description = "PySpark-native feature engineering transformers built on the Spark ML API"
+readme = "README.md"
 requires-python = ">=3.10"
-license = {text = "MIT"}
+license = "BSD-3-Clause"
 authors = [{name = "spark_feature_engine contributors"}]
 dependencies = ["pyspark>=3.5"]
 

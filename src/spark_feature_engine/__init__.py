@@ -1,6 +1,12 @@
 """spark_feature_engine package."""
 
 from .base import BaseSparkTransformer
+from .creation import (
+    CyclicalFeatures,
+    CyclicalFeaturesModel,
+    MathFeatures,
+    RelativeFeatures,
+)
 from .discretisation import (
     ArbitraryDiscretiser,
     ArbitraryDiscretiserModel,
@@ -31,6 +37,10 @@ from .transformation import LogTransformer, PowerTransformer
 
 __all__ = (
     "BaseSparkTransformer",
+    "CyclicalFeatures",
+    "CyclicalFeaturesModel",
+    "MathFeatures",
+    "RelativeFeatures",
     "ArbitraryDiscretiser",
     "ArbitraryDiscretiserModel",
     "EqualFrequencyDiscretiser",

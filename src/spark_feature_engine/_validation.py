@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from numbers import Real
-from typing import Iterable, Literal, Sequence
+from typing import Iterable, Literal, Mapping, Sequence
 
 from pyspark.sql import DataFrame
 from pyspark.sql.types import NumericType, StringType, StructField
@@ -147,6 +147,108 @@ def normalize_exponent(value: Real) -> float:
     if not isinstance(value, Real) or isinstance(value, bool):
         raise TypeError("exponent must be a real number")
     return float(value)
+
+
+def normalize_creation_functions(
+    value: Sequence[str], *, allowed: Sequence[str], name: str = "func"
+) -> list[str]:
+    """Normalize a sequence of supported creation-function names."""
+    if isinstance(value, (str, bytes)):
+        raise TypeError(f"{name} must be a sequence of supported function names")
+
+    normalized = to_optional_list_of_strings(value)
+    assert normalized is not None
+    if not normalized:
+        raise ValueError(f"{name} must contain at least one function name")
+
+    converted = [normalize_option_value(name, item) for item in normalized]
+    validate_unique_columns(converted)
+
+    normalized_allowed = [normalize_option_value(name, option) for option in allowed]
+    invalid = [item for item in converted if item not in normalized_allowed]
+    if invalid:
+        joined = ", ".join(invalid)
+        raise ValueError(f"Unsupported {name}: {joined}")
+
+    return converted
+
+
+def validate_minimum_variable_count(
+    columns: Sequence[str], *, minimum: int, name: str = "variables"
+) -> list[str]:
+    """Ensure a column collection contains at least a minimum count."""
+    normalized = to_optional_list_of_strings(columns)
+    assert normalized is not None
+
+    if not isinstance(minimum, int) or isinstance(minimum, bool) or minimum <= 0:
+        raise ValueError("minimum must be a positive integer")
+    if len(normalized) < minimum:
+        raise ValueError(f"{name} must contain at least {minimum} column names")
+    return normalized
+
+
+def resolve_relative_feature_variables(
+    dataset: DataFrame,
+    *,
+    variables: Sequence[str] | None = None,
+    reference: Sequence[str],
+) -> list[str]:
+    """Resolve relative-feature variables, defaulting to numeric non-reference columns."""
+    resolved_reference = resolve_numeric_columns(dataset, variables=reference)
+    if variables is None:
+        resolved_variables = [
+            column
+            for column in resolve_numeric_columns(dataset)
+            if column not in resolved_reference
+        ]
+    else:
+        resolved_variables = resolve_numeric_columns(dataset, variables=variables)
+
+    return validate_minimum_variable_count(
+        resolved_variables,
+        minimum=1,
+        name="variables",
+    )
+
+
+def normalize_max_values(
+    max_values: Mapping[str, Real], *, variables: Sequence[str]
+) -> dict[str, float]:
+    """Validate a per-variable positive numeric maximum-value mapping."""
+    if not isinstance(max_values, Mapping):
+        raise TypeError(
+            "max_values must be a mapping of variable names to numeric values"
+        )
+
+    resolved_variables = to_optional_list_of_strings(variables)
+    assert resolved_variables is not None
+    validate_unique_columns(resolved_variables)
+
+    if any(not isinstance(key, str) for key in max_values):
+        raise TypeError("max_values keys must be string variable names")
+
+    expected = set(resolved_variables)
+    provided = set(max_values)
+    missing = [variable for variable in resolved_variables if variable not in provided]
+    extra = sorted(provided - expected)
+    if missing:
+        joined = ", ".join(missing)
+        raise ValueError(f"max_values is missing variable(s): {joined}")
+    if extra:
+        joined = ", ".join(extra)
+        raise ValueError(f"max_values contains unknown variable(s): {joined}")
+
+    normalized: dict[str, float] = {}
+    for variable in resolved_variables:
+        value = max_values[variable]
+        if not isinstance(value, Real) or isinstance(value, bool):
+            raise TypeError("max_values must contain only numeric values")
+        converted = float(value)
+        if converted <= 0:
+            raise ValueError("max_values must contain only positive values")
+        normalized[variable] = converted
+
+    return normalized
 
 
 def validate_positive_values(
@@ -310,11 +412,14 @@ __all__ = (
     "ColumnExpectation",
     "discover_numeric_columns",
     "matches_expected_type",
+    "normalize_creation_functions",
     "normalize_option_value",
+    "normalize_max_values",
     "normalize_exponent",
     "resolve_variables",
     "resolve_categorical_columns",
     "resolve_numeric_columns",
+    "resolve_relative_feature_variables",
     "to_optional_list_of_strings",
     "validate_bin_count",
     "validate_column_presence",
@@ -324,6 +429,7 @@ __all__ = (
     "validate_generated_column_names",
     "validate_learned_attribute_name",
     "validate_learned_state",
+    "validate_minimum_variable_count",
     "validate_outlier_bounds",
     "validate_positive_values",
     "validate_supported_option",

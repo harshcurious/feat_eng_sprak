@@ -10,6 +10,8 @@ from spark_feature_engine import (
     BaseSparkTransformer,
     CountFrequencyEncoder,
     CountFrequencyEncoderModel,
+    CyclicalFeatures,
+    CyclicalFeaturesModel,
     CategoricalImputer,
     DropMissingData,
     EqualFrequencyDiscretiser,
@@ -19,6 +21,7 @@ from spark_feature_engine import (
     MeanMedianImputer,
     MeanMedianImputerModel,
     LogTransformer,
+    MathFeatures,
     OneHotEncoder,
     OneHotEncoderModel,
     OutlierTrimmer,
@@ -28,6 +31,7 @@ from spark_feature_engine import (
     PowerTransformer,
     RareLabelEncoder,
     RareLabelEncoderModel,
+    RelativeFeatures,
     Winsorizer,
     WinsorizerModel,
 )
@@ -36,6 +40,10 @@ from spark_feature_engine import (
 def test_public_package_exports_are_available() -> None:
     expected = {
         "BaseSparkTransformer",
+        "CyclicalFeatures",
+        "CyclicalFeaturesModel",
+        "MathFeatures",
+        "RelativeFeatures",
         "ArbitraryDiscretiser",
         "ArbitraryDiscretiserModel",
         "EqualFrequencyDiscretiser",
@@ -66,6 +74,10 @@ def test_public_package_exports_are_available() -> None:
     assert set(spark_feature_engine.__all__) == expected
     assert spark_feature_engine.__version__ == "0.0.0"
     assert BaseSparkTransformer is spark_feature_engine.BaseSparkTransformer
+    assert CyclicalFeatures is spark_feature_engine.CyclicalFeatures
+    assert CyclicalFeaturesModel is spark_feature_engine.CyclicalFeaturesModel
+    assert MathFeatures is spark_feature_engine.MathFeatures
+    assert RelativeFeatures is spark_feature_engine.RelativeFeatures
     assert ArbitraryDiscretiser is spark_feature_engine.ArbitraryDiscretiser
     assert ArbitraryDiscretiserModel is spark_feature_engine.ArbitraryDiscretiserModel
     assert EqualFrequencyDiscretiser is spark_feature_engine.EqualFrequencyDiscretiser
