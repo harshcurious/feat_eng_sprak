@@ -13,6 +13,12 @@ from spark_feature_engine import (
     CyclicalFeatures,
     CyclicalFeaturesModel,
     CategoricalImputer,
+    DropConstantFeatures,
+    DropConstantFeaturesModel,
+    DropCorrelatedFeatures,
+    DropCorrelatedFeaturesModel,
+    DropDuplicateFeatures,
+    DropDuplicateFeaturesModel,
     DropMissingData,
     EqualFrequencyDiscretiser,
     EqualFrequencyDiscretiserModel,
@@ -32,6 +38,8 @@ from spark_feature_engine import (
     RareLabelEncoder,
     RareLabelEncoderModel,
     RelativeFeatures,
+    SmartCorrelatedSelection,
+    SmartCorrelatedSelectionModel,
     Winsorizer,
     WinsorizerModel,
 )
@@ -67,6 +75,14 @@ def test_public_package_exports_are_available() -> None:
         "OutlierTrimmerModel",
         "Winsorizer",
         "WinsorizerModel",
+        "DropConstantFeatures",
+        "DropConstantFeaturesModel",
+        "DropCorrelatedFeatures",
+        "DropCorrelatedFeaturesModel",
+        "DropDuplicateFeatures",
+        "DropDuplicateFeaturesModel",
+        "SmartCorrelatedSelection",
+        "SmartCorrelatedSelectionModel",
         "LogTransformer",
         "PowerTransformer",
     }
@@ -78,6 +94,19 @@ def test_public_package_exports_are_available() -> None:
     assert CyclicalFeaturesModel is spark_feature_engine.CyclicalFeaturesModel
     assert MathFeatures is spark_feature_engine.MathFeatures
     assert RelativeFeatures is spark_feature_engine.RelativeFeatures
+    assert DropConstantFeatures is spark_feature_engine.DropConstantFeatures
+    assert DropConstantFeaturesModel is spark_feature_engine.DropConstantFeaturesModel
+    assert DropCorrelatedFeatures is spark_feature_engine.DropCorrelatedFeatures
+    assert (
+        DropCorrelatedFeaturesModel is spark_feature_engine.DropCorrelatedFeaturesModel
+    )
+    assert DropDuplicateFeatures is spark_feature_engine.DropDuplicateFeatures
+    assert DropDuplicateFeaturesModel is spark_feature_engine.DropDuplicateFeaturesModel
+    assert SmartCorrelatedSelection is spark_feature_engine.SmartCorrelatedSelection
+    assert (
+        SmartCorrelatedSelectionModel
+        is spark_feature_engine.SmartCorrelatedSelectionModel
+    )
     assert ArbitraryDiscretiser is spark_feature_engine.ArbitraryDiscretiser
     assert ArbitraryDiscretiserModel is spark_feature_engine.ArbitraryDiscretiserModel
     assert EqualFrequencyDiscretiser is spark_feature_engine.EqualFrequencyDiscretiser

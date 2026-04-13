@@ -33,6 +33,16 @@ from .imputation import (
     MeanMedianImputerModel,
 )
 from .outliers import OutlierTrimmer, OutlierTrimmerModel, Winsorizer, WinsorizerModel
+from .selection import (
+    DropConstantFeatures,
+    DropConstantFeaturesModel,
+    DropCorrelatedFeatures,
+    DropCorrelatedFeaturesModel,
+    DropDuplicateFeatures,
+    DropDuplicateFeaturesModel,
+    SmartCorrelatedSelection,
+    SmartCorrelatedSelectionModel,
+)
 from .transformation import LogTransformer, PowerTransformer
 
 __all__ = (
@@ -64,6 +74,14 @@ __all__ = (
     "OutlierTrimmerModel",
     "Winsorizer",
     "WinsorizerModel",
+    "DropConstantFeatures",
+    "DropConstantFeaturesModel",
+    "DropCorrelatedFeatures",
+    "DropCorrelatedFeaturesModel",
+    "DropDuplicateFeatures",
+    "DropDuplicateFeaturesModel",
+    "SmartCorrelatedSelection",
+    "SmartCorrelatedSelectionModel",
     "LogTransformer",
     "PowerTransformer",
 )

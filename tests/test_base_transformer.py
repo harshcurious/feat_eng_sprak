@@ -152,3 +152,10 @@ def test_fitted_models_reject_transform_before_learned_state_exists(
 
     with pytest.raises(ValueError, match="selected_columns_"):
         model.transform(dataset)
+
+
+def test_fitted_models_can_assert_selector_drop_state() -> None:
+    model = DummyBaseModel()
+    model._set_learned_attribute("features_to_drop_", ["x2"])
+
+    model.require_fitted("features_to_drop_")

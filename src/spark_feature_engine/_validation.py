@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from numbers import Real
-from typing import Iterable, Literal, Mapping, Sequence
+from typing import Iterable, Literal, Mapping, Sequence, SupportsFloat
 
 from pyspark.sql import DataFrame
 from pyspark.sql.types import NumericType, StringType, StructField
@@ -251,6 +251,68 @@ def normalize_max_values(
     return normalized
 
 
+def normalize_selector_threshold(
+    value: SupportsFloat, *, name: str = "threshold"
+) -> float:
+    """Normalize a selector threshold constrained to the inclusive [0, 1] range."""
+    if isinstance(value, bool):
+        raise TypeError(f"{name} must be a real number between 0 and 1")
+    try:
+        converted = float(value)
+    except (TypeError, ValueError) as error:
+        raise TypeError(f"{name} must be a real number between 0 and 1") from error
+    if converted < 0 or converted > 1:
+        raise ValueError(f"{name} must be a real number between 0 and 1")
+    return converted
+
+
+def normalize_selection_method(value: str, *, allowed: Sequence[str]) -> str:
+    """Normalize and validate a selection strategy name."""
+    return validate_supported_option("selection_method", value, allowed=allowed)
+
+
+def resolve_numeric_selection_columns(
+    dataset: DataFrame,
+    *,
+    variables: Sequence[str] | None = None,
+    minimum: int = 2,
+) -> list[str]:
+    """Resolve numeric selector columns and require a minimum count."""
+    resolved = resolve_numeric_columns(dataset, variables=variables)
+    return validate_minimum_variable_count(
+        resolved,
+        minimum=minimum,
+        name="variables",
+    )
+
+
+def validate_features_to_drop(
+    *,
+    variables: Sequence[str],
+    features_to_drop: Sequence[str],
+) -> list[str]:
+    """Validate a learned selector drop set against selected variables."""
+    resolved_variables = to_optional_list_of_strings(variables)
+    drop_candidates = to_optional_list_of_strings(features_to_drop)
+    assert resolved_variables is not None
+    assert drop_candidates is not None
+
+    validate_unique_columns(resolved_variables)
+    validate_unique_columns(drop_candidates)
+
+    unknown = [column for column in drop_candidates if column not in resolved_variables]
+    if unknown:
+        joined = ", ".join(unknown)
+        raise ValueError(
+            f"features_to_drop contains unknown selected variable(s): {joined}"
+        )
+    if len(drop_candidates) >= len(resolved_variables):
+        raise ValueError(
+            "Selector cannot drop all selected features; at least one selected feature must remain"
+        )
+    return drop_candidates
+
+
 def validate_positive_values(
     values: Sequence[Real], *, name: str = "values"
 ) -> list[float]:
@@ -416,9 +478,12 @@ __all__ = (
     "normalize_option_value",
     "normalize_max_values",
     "normalize_exponent",
+    "normalize_selection_method",
+    "normalize_selector_threshold",
     "resolve_variables",
     "resolve_categorical_columns",
     "resolve_numeric_columns",
+    "resolve_numeric_selection_columns",
     "resolve_relative_feature_variables",
     "to_optional_list_of_strings",
     "validate_bin_count",
@@ -432,6 +497,7 @@ __all__ = (
     "validate_minimum_variable_count",
     "validate_outlier_bounds",
     "validate_positive_values",
+    "validate_features_to_drop",
     "validate_supported_option",
     "validate_unique_columns",
 )
