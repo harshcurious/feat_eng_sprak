@@ -5,6 +5,7 @@ from __future__ import annotations
 from numbers import Real
 from typing import Iterable, Literal, Mapping, Sequence, SupportsFloat
 
+from pyspark.ml import Estimator as SparkEstimator
 from pyspark.sql import DataFrame
 from pyspark.sql.types import NumericType, StringType, StructField
 
@@ -271,6 +272,15 @@ def normalize_selection_method(value: str, *, allowed: Sequence[str]) -> str:
     return validate_supported_option("selection_method", value, allowed=allowed)
 
 
+def normalize_classification_scoring(value: str) -> str:
+    """Normalize and validate supported Phase 6 classification metrics."""
+    return validate_supported_option(
+        "scoring",
+        value,
+        allowed=("roc_auc", "accuracy"),
+    )
+
+
 def resolve_numeric_selection_columns(
     dataset: DataFrame,
     *,
@@ -311,6 +321,81 @@ def validate_features_to_drop(
             "Selector cannot drop all selected features; at least one selected feature must remain"
         )
     return drop_candidates
+
+
+def validate_configured_features_to_drop(
+    *,
+    dataset_columns: Sequence[str],
+    features_to_drop: Sequence[str],
+) -> list[str]:
+    """Validate an explicit configured drop set against full dataset columns."""
+    resolved_columns = to_optional_list_of_strings(dataset_columns)
+    drop_candidates = to_optional_list_of_strings(features_to_drop)
+    assert resolved_columns is not None
+    assert drop_candidates is not None
+
+    validate_unique_columns(resolved_columns)
+    validate_unique_columns(drop_candidates)
+
+    unknown = [column for column in drop_candidates if column not in resolved_columns]
+    if unknown:
+        joined = ", ".join(unknown)
+        raise ValueError(
+            f"features_to_drop contains unknown dataset column(s): {joined}"
+        )
+    if len(drop_candidates) >= len(resolved_columns):
+        raise ValueError(
+            "Dropping these features would leave no columns in the dataset"
+        )
+    return drop_candidates
+
+
+def validate_binary_target_column(dataset: DataFrame, *, target: str) -> str:
+    """Validate that a target column exists, is numeric, and contains two classes."""
+    validate_column_presence(dataset, [target])
+    validate_column_types(dataset, [target], expected_type="numeric")
+
+    distinct_values = [
+        row[target]
+        for row in dataset.select(target).distinct().orderBy(target).collect()
+        if row[target] is not None
+    ]
+    if len(distinct_values) != 2:
+        raise ValueError(
+            f"Target column '{target}' must contain exactly two binary classes"
+        )
+    return target
+
+
+def validate_native_classification_estimator(
+    estimator: object,
+    *,
+    require_feature_importance: bool = False,
+) -> object:
+    """Validate the minimal native-estimator contract for Phase 6 selectors."""
+    is_supported = getattr(
+        estimator, "_spark_feature_engine_native", False
+    ) or isinstance(estimator, SparkEstimator)
+    if not is_supported:
+        raise TypeError(
+            "Estimator must be Spark DataFrame-native and declare "
+            "_spark_feature_engine_native=True or be a Spark ML Estimator"
+        )
+    if not callable(getattr(estimator, "fit", None)):
+        raise TypeError("Estimator must provide a callable fit method")
+    if not callable(getattr(estimator, "copy", None)):
+        raise TypeError("Estimator must provide a callable copy method")
+    if (
+        require_feature_importance
+        and not isinstance(estimator, SparkEstimator)
+        and not (
+            hasattr(estimator, "featureImportances") or hasattr(estimator, "coef_")
+        )
+    ):
+        raise TypeError(
+            "Estimator must expose feature importance metadata for this selector"
+        )
+    return estimator
 
 
 def validate_positive_values(
@@ -474,6 +559,7 @@ __all__ = (
     "ColumnExpectation",
     "discover_numeric_columns",
     "matches_expected_type",
+    "normalize_classification_scoring",
     "normalize_creation_functions",
     "normalize_option_value",
     "normalize_max_values",
@@ -498,6 +584,9 @@ __all__ = (
     "validate_outlier_bounds",
     "validate_positive_values",
     "validate_features_to_drop",
+    "validate_binary_target_column",
+    "validate_configured_features_to_drop",
+    "validate_native_classification_estimator",
     "validate_supported_option",
     "validate_unique_columns",
 )

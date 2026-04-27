@@ -159,3 +159,11 @@ def test_fitted_models_can_assert_selector_drop_state() -> None:
     model._set_learned_attribute("features_to_drop_", ["x2"])
 
     model.require_fitted("features_to_drop_")
+
+
+def test_fitted_models_can_assert_phase6_selector_metric_state() -> None:
+    model = DummyBaseModel()
+    model._set_learned_attribute("feature_performance_", {"x1": 0.8})
+    model._set_learned_attribute("feature_performance_std_", {"x1": 0.05})
+
+    model.require_fitted("feature_performance_", "feature_performance_std_")

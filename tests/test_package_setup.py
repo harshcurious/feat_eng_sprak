@@ -13,8 +13,11 @@ from spark_feature_engine import (
     CyclicalFeatures,
     CyclicalFeaturesModel,
     CategoricalImputer,
+    DropFeatures,
     DropConstantFeatures,
     DropConstantFeaturesModel,
+    DropHighPSIFeatures,
+    DropHighPSIFeaturesModel,
     DropCorrelatedFeatures,
     DropCorrelatedFeaturesModel,
     DropDuplicateFeatures,
@@ -34,10 +37,24 @@ from spark_feature_engine import (
     OutlierTrimmerModel,
     OrdinalEncoder,
     OrdinalEncoderModel,
+    ProbeFeatureSelection,
+    ProbeFeatureSelectionModel,
     PowerTransformer,
+    RecursiveFeatureAddition,
+    RecursiveFeatureAdditionModel,
+    RecursiveFeatureElimination,
+    RecursiveFeatureEliminationModel,
     RareLabelEncoder,
     RareLabelEncoderModel,
     RelativeFeatures,
+    SelectByInformationValue,
+    SelectByInformationValueModel,
+    SelectBySingleFeaturePerformance,
+    SelectBySingleFeaturePerformanceModel,
+    SelectByShuffling,
+    SelectByShufflingModel,
+    SelectByTargetMeanPerformance,
+    SelectByTargetMeanPerformanceModel,
     SmartCorrelatedSelection,
     SmartCorrelatedSelectionModel,
     Winsorizer,
@@ -75,12 +92,29 @@ def test_public_package_exports_are_available() -> None:
         "OutlierTrimmerModel",
         "Winsorizer",
         "WinsorizerModel",
+        "DropFeatures",
         "DropConstantFeatures",
         "DropConstantFeaturesModel",
+        "DropHighPSIFeatures",
+        "DropHighPSIFeaturesModel",
         "DropCorrelatedFeatures",
         "DropCorrelatedFeaturesModel",
         "DropDuplicateFeatures",
         "DropDuplicateFeaturesModel",
+        "ProbeFeatureSelection",
+        "ProbeFeatureSelectionModel",
+        "RecursiveFeatureAddition",
+        "RecursiveFeatureAdditionModel",
+        "RecursiveFeatureElimination",
+        "RecursiveFeatureEliminationModel",
+        "SelectByInformationValue",
+        "SelectByInformationValueModel",
+        "SelectBySingleFeaturePerformance",
+        "SelectBySingleFeaturePerformanceModel",
+        "SelectByShuffling",
+        "SelectByShufflingModel",
+        "SelectByTargetMeanPerformance",
+        "SelectByTargetMeanPerformanceModel",
         "SmartCorrelatedSelection",
         "SmartCorrelatedSelectionModel",
         "LogTransformer",
@@ -133,8 +167,48 @@ def test_public_package_exports_are_available() -> None:
     assert OutlierTrimmerModel is spark_feature_engine.OutlierTrimmerModel
     assert Winsorizer is spark_feature_engine.Winsorizer
     assert WinsorizerModel is spark_feature_engine.WinsorizerModel
+    assert DropFeatures is spark_feature_engine.DropFeatures
     assert LogTransformer is spark_feature_engine.LogTransformer
     assert PowerTransformer is spark_feature_engine.PowerTransformer
+    assert DropHighPSIFeatures is spark_feature_engine.DropHighPSIFeatures
+    assert DropHighPSIFeaturesModel is spark_feature_engine.DropHighPSIFeaturesModel
+    assert ProbeFeatureSelection is spark_feature_engine.ProbeFeatureSelection
+    assert ProbeFeatureSelectionModel is spark_feature_engine.ProbeFeatureSelectionModel
+    assert RecursiveFeatureAddition is spark_feature_engine.RecursiveFeatureAddition
+    assert (
+        RecursiveFeatureAdditionModel
+        is spark_feature_engine.RecursiveFeatureAdditionModel
+    )
+    assert (
+        RecursiveFeatureElimination is spark_feature_engine.RecursiveFeatureElimination
+    )
+    assert (
+        RecursiveFeatureEliminationModel
+        is spark_feature_engine.RecursiveFeatureEliminationModel
+    )
+    assert SelectByInformationValue is spark_feature_engine.SelectByInformationValue
+    assert (
+        SelectByInformationValueModel
+        is spark_feature_engine.SelectByInformationValueModel
+    )
+    assert (
+        SelectBySingleFeaturePerformance
+        is spark_feature_engine.SelectBySingleFeaturePerformance
+    )
+    assert (
+        SelectBySingleFeaturePerformanceModel
+        is spark_feature_engine.SelectBySingleFeaturePerformanceModel
+    )
+    assert SelectByShuffling is spark_feature_engine.SelectByShuffling
+    assert SelectByShufflingModel is spark_feature_engine.SelectByShufflingModel
+    assert (
+        SelectByTargetMeanPerformance
+        is spark_feature_engine.SelectByTargetMeanPerformance
+    )
+    assert (
+        SelectByTargetMeanPerformanceModel
+        is spark_feature_engine.SelectByTargetMeanPerformanceModel
+    )
 
 
 def test_shared_spark_fixture_is_local_and_deterministic(spark_session) -> None:
