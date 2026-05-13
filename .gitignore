@@ -73,3 +73,6 @@ venv.bak/
 spark-warehouse/
 metastore_db/
 derby.log
+
+# Marimo generated artifacts
+examples/__marimo__/
